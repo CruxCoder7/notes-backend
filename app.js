@@ -24,10 +24,12 @@ app.post("/api/blogs", async (req, res) => {
 app.post("/api/notes", async (req, res) => {
   const subject = req.body.subject;
   const topic = req.body.topic;
+  const semester = req.body.semester;
   const url = req.body.url;
   const note = new Note({
     subject: subject,
     topic: topic,
+    semester: semester,
     url: url,
   });
   await note.save();
