@@ -4,10 +4,10 @@ import connectDB from "./db/connect.js";
 import dotenv from "dotenv";
 import Post from "./models/Post.js";
 import Note from "./models/Note.js";
-
 dotenv.config();
 
 const app = express();
+const router = express.Router();
 app.use(cors());
 app.use(express.json());
 
@@ -24,12 +24,10 @@ app.post("/api/blogs", async (req, res) => {
 app.post("/api/notes", async (req, res) => {
   const subject = req.body.subject;
   const topic = req.body.topic;
-  const semester = req.body.semester;
   const url = req.body.url;
   const note = new Note({
     subject: subject,
     topic: topic,
-    semester: semester,
     url: url,
   });
   await note.save();
@@ -129,5 +127,4 @@ const start = () => {
     console.log(err);
   }
 };
-
 start();

@@ -9,10 +9,6 @@ const NoteSchema = new mongoose.Schema({
     type: String,
     required: [true, "Provide a topic"],
   },
-  semester: {
-    type: Number,
-    required: [true, "Provide semester num"],
-  },
   url: {
     type: String,
     required: [true, "provide a URL"],
