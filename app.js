@@ -4,10 +4,11 @@ import connectDB from "./db/connect.js";
 import dotenv from "dotenv";
 import Post from "./models/Post.js";
 import Note from "./models/Note.js";
+import jwt from "jsonwebtoken";
+
 dotenv.config();
 
 const app = express();
-const router = express.Router();
 app.use(cors());
 app.use(express.json());
 
@@ -114,6 +115,48 @@ app.patch("/api/notes/update/:id", async (req, res) => {
   } catch (err) {
     res.send(err);
   }
+});
+
+app.post("/api/login", (req, res) => {
+  const email = req.body.email;
+  const pwd = req.body.pwd;
+
+  if (
+    email === process.env.REACT_APP_ADMIN_EMAIL &&
+    pwd === process.env.REACT_APP_ADMIN_PASSWORD
+  ) {
+    jwt.sign(
+      { email, pwd },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "1h" },
+      (err, token) => {
+        if (err) {
+          console.log(err);
+        }
+        res.send(token);
+      }
+    );
+  } else {
+    res.send("false");
+  }
+});
+
+app.post("/api/verify", (req, res) => {
+  const token = req.body.token;
+  jwt.verify(token, process.env.JWT_SECRET_KEY, (err, authorizedData) => {
+    if (err) {
+      //If error send Forbidden (403)
+      console.log("ERROR: Could not connect to the protected route");
+      res.sendStatus(403);
+    } else {
+      //If token is successfully verified, we can send the autorized data
+      res.json({
+        message: "success",
+        authorizedData,
+      });
+      console.log("SUCCESS: Connected to protected route");
+    }
+  });
 });
 
 let port = process.env.PORT || 3002;
